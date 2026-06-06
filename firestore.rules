@@ -1,0 +1,77 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to get user data
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // User profiles
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == userId || getUserData().role == 'admin';
+    }
+
+    // Products / Marketplace
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if getUserData().role == 'farmer';
+      allow update, delete: if request.auth.uid == resource.data.farmerId || getUserData().role == 'admin';
+    }
+
+    // Orders
+    match /orders/{orderId} {
+      allow read: if request.auth != null && (
+        request.auth.uid == resource.data.buyerId || 
+        request.auth.uid == resource.data.farmerId || 
+        getUserData().role == 'admin'
+      );
+      allow create: if request.auth != null;
+      allow update: if request.auth.uid == resource.data.farmerId || request.auth.uid == resource.data.buyerId;
+    }
+
+    // Aid Programs
+    match /aid_programs/{programId} {
+      allow read: if true;
+      allow write: if getUserData().role == 'lgu' || getUserData().role == 'admin';
+    }
+
+    // Aid Applications
+    match /aid_applications/{appId} {
+      allow read: if request.auth != null && (
+        request.auth.uid == resource.data.farmerId || 
+        getUserData().role == 'lgu' || 
+        getUserData().role == 'admin'
+      );
+      allow create: if getUserData().role == 'farmer';
+      allow update: if getUserData().role == 'lgu' || getUserData().role == 'admin';
+    }
+
+    // Harvest Logs & Financial Records
+    match /harvest_logs/{logId} {
+      allow read, write: if request.auth.uid == resource.data.farmerId || (request.method == 'create' && request.auth != null);
+    }
+    match /financial_records/{recordId} {
+      allow read, write: if request.auth.uid == resource.data.farmerId || (request.method == 'create' && request.auth != null);
+    }
+
+    // Forum
+    match /forum_posts/{postId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth.uid == resource.data.authorId || getUserData().role == 'admin';
+    }
+
+    // Market Prices
+    match /market_prices/{priceId} {
+      allow read: if true;
+      allow write: if getUserData().role == 'lgu' || getUserData().role == 'admin';
+    }
+
+    // Notifications
+    match /notifications/{notifId} {
+      allow read, update: if request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null;
+    }
+  }
+}

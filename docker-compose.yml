@@ -1,43 +1,58 @@
-version: '3.8'
+# ============================================================
+#  docker-compose.yml — Farm System Local Dev Stack
+#  Services:
+#    - frontend  → Next.js  (http://localhost:3000)
+#    - firebase  → Firebase Emulators
+#      ↳ Emulator UI   → http://localhost:4000
+#      ↳ Firestore     → http://localhost:8080
+#      ↳ Auth          → http://localhost:9099
+# ============================================================
 
 services:
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: ojt_system
-      MYSQL_USER: ojt_user
-      MYSQL_PASSWORD: ojt_password
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
 
-  backend:
-    build: ./backend
+  # ── Firebase Emulators (Local Backend) ───────────────────
+  firebase:
+    build:
+      context: .
+      dockerfile: Dockerfile.firebase
+    container_name: farm-firebase
     ports:
-      - "8080:8080"
-    environment:
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_USER: ojt_user
-      DB_PASSWORD: ojt_password
-      DB_NAME: ojt_system
-      JWT_SECRET: change_this_to_a_strong_secret
-      PORT: 8080
-    depends_on:
-      - db
+      - "4000:4000"   # Emulator UI
+      - "8080:8080"   # Firestore
+      - "9099:9099"   # Auth
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
 
+  # ── Next.js Frontend ─────────────────────────────────────
   frontend:
-    image: node:20-alpine
-    working_dir: /app
-    volumes:
-      - ./frontend:/app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: farm-frontend
     ports:
-      - "5173:5173"
-    command: sh -c "npm install && npm run dev -- --host"
+      - "3000:3000"
+    volumes:
+      # Mount source code for hot reload
+      - .:/app
+      # Preserve container's node_modules (don't override with host)
+      - /app/node_modules
+      # Preserve Next.js build cache
+      - /app/.next
+    env_file:
+      # Load your Firebase credentials from .env.local
+      - .env.local
     environment:
-      VITE_API_URL: http://localhost:8080/api
-
-volumes:
-  mysql_data:
+      # Point Firebase SDK to local emulators
+      - NEXT_PUBLIC_FIREBASE_EMULATOR_HOST=localhost
+      - NEXT_PUBLIC_FIRESTORE_EMULATOR_PORT=8080
+      - NEXT_PUBLIC_AUTH_EMULATOR_PORT=9099
+      - WATCHPACK_POLLING=true
+    depends_on:
+      firebase:
+        condition: service_healthy
+    restart: unless-stopped

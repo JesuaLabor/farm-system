@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+:root {
+  /* Brand Colors - Earthy Farm Palette */
+  --primary: #2d5a27;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f8e9;
+  --secondary-foreground: #1b5e20;
+  --accent: #ffb300;
+  --accent-foreground: #000000;
+  
+  --background: #fdfdfb;
+  --foreground: #1a1c18;
+
+  --card: #ffffff;
+  --card-foreground: #1a1c18;
+
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #2d5a27;
+
+  --radius: 0.75rem;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-blur: 12px;
+}
+
+.dark {
+  --primary: #81c784;
+  --primary-foreground: #003300;
+  --secondary: #1b3320;
+  --secondary-foreground: #c8e6c9;
+  
+  --background: #0f120e;
+  --foreground: #e1e3dd;
+
+  --card: #181d17;
+  --card-foreground: #e1e3dd;
+
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+
+  --border: #334155;
+  --input: #334155;
+  --ring: #81c784;
+
+  --glass-bg: rgba(24, 29, 23, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+@theme inline {
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-xl: var(--radius);
+  
+  --font-sans: var(--font-jakarta);
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+}
+
+.animate-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

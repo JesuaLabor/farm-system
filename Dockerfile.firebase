@@ -1,0 +1,27 @@
+# ============================================================
+#  Dockerfile.firebase — Firebase Emulator Suite
+#  Runs: Auth (9099) + Firestore (8080) + Emulator UI (4000)
+# ============================================================
+
+FROM node:20-alpine
+
+# Install Java (required by Firebase emulators) and firebase-tools
+RUN apk add --no-cache openjdk17-jre curl bash && \
+    npm install -g firebase-tools
+
+WORKDIR /app
+
+# Copy Firebase config files
+COPY firebase.json .
+COPY firestore.rules .
+COPY firestore.indexes.json .
+
+# Expose emulator ports
+EXPOSE 4000 8080 9099
+
+# Use a demo project (no real Firebase credentials needed for local emulation)
+ENV FIREBASE_PROJECT=demo-farm-system
+
+CMD ["firebase", "emulators:start", \
+     "--only", "auth,firestore", \
+     "--project", "demo-farm-system"]

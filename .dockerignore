@@ -1,0 +1,40 @@
+# ============================================================
+#  .dockerignore — Farm System
+# ============================================================
+
+# Dependencies (reinstalled inside container)
+node_modules
+npm-debug.log*
+
+# Next.js build output
+.next
+out
+
+# Environment files (injected at runtime via env_file)
+.env.local
+.env*.local
+
+# Git
+.git
+.gitignore
+
+# Dev tools
+.eslintcache
+*.log
+
+# Docker files themselves
+Dockerfile*
+docker-compose.yml
+.dockerignore
+
+# Docs
+*.md
+FUTURE_IDEAS.md
+IMPLEMENTATION_PLAN.md
+
+# Scripts
+run_project.sh
+
+# Editor
+.vscode
+.idea

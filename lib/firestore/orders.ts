@@ -10,7 +10,7 @@ import {
   orderBy,
   arrayUnion,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getDb } from "@/lib/firebase";
 import type { Order, OrderStatus, OrderMessage } from "@/types";
 
 const COL = "orders";
@@ -19,7 +19,7 @@ const COL = "orders";
 export async function createOrder(
   data: Omit<Order, "id" | "createdAt" | "messages" | "status">
 ): Promise<string> {
-  const ref = await addDoc(collection(db, COL), {
+  const ref = await addDoc(collection(getDb(), COL), {
     ...data,
     status: "pending" as OrderStatus,
     messages: [],
@@ -31,7 +31,7 @@ export async function createOrder(
 /** Get all orders for a buyer */
 export async function getBuyerOrders(buyerId: string): Promise<Order[]> {
   const q = query(
-    collection(db, COL),
+    collection(getDb(), COL),
     where("buyerId", "==", buyerId),
     orderBy("createdAt", "desc")
   );
@@ -42,7 +42,7 @@ export async function getBuyerOrders(buyerId: string): Promise<Order[]> {
 /** Get all orders for a farmer */
 export async function getFarmerOrders(farmerId: string): Promise<Order[]> {
   const q = query(
-    collection(db, COL),
+    collection(getDb(), COL),
     where("farmerId", "==", farmerId),
     orderBy("createdAt", "desc")
   );
@@ -52,7 +52,7 @@ export async function getFarmerOrders(farmerId: string): Promise<Order[]> {
 
 /** Get a single order by ID */
 export async function getOrder(id: string): Promise<Order | null> {
-  const snap = await getDoc(doc(db, COL, id));
+  const snap = await getDoc(doc(getDb(), COL, id));
   if (!snap.exists()) return null;
   return { id: snap.id, ...snap.data() } as Order;
 }
@@ -62,7 +62,7 @@ export async function updateOrderStatus(
   id: string,
   status: OrderStatus
 ): Promise<void> {
-  await updateDoc(doc(db, COL, id), {
+  await updateDoc(doc(getDb(), COL, id), {
     status,
     updatedAt: new Date().toISOString(),
   });
@@ -77,7 +77,7 @@ export async function sendOrderMessage(
     ...message,
     createdAt: new Date().toISOString(),
   };
-  await updateDoc(doc(db, COL, orderId), {
+  await updateDoc(doc(getDb(), COL, orderId), {
     messages: arrayUnion(msg),
     updatedAt: new Date().toISOString(),
   });
@@ -86,7 +86,7 @@ export async function sendOrderMessage(
 /** Get all orders for a specific product */
 export async function getProductOrders(productId: string): Promise<Order[]> {
   const q = query(
-    collection(db, COL),
+    collection(getDb(), COL),
     where("productId", "==", productId),
     orderBy("createdAt", "desc")
   );

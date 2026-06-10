@@ -2,14 +2,14 @@ import {
   collection, doc, addDoc, getDocs, updateDoc,
   query, where, orderBy, onSnapshot, limit,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getDb } from "@/lib/firebase";
 import type { Notification, NotificationType } from "@/types";
 
 const COL = "notifications";
 
 /** Create a notification for a user */
 export async function createNotification(data: Omit<Notification, "id" | "createdAt" | "isRead">): Promise<string> {
-  const ref = await addDoc(collection(db, COL), {
+  const ref = await addDoc(collection(getDb(), COL), {
     ...data,
     isRead: false,
     createdAt: new Date().toISOString(),
@@ -20,7 +20,7 @@ export async function createNotification(data: Omit<Notification, "id" | "create
 /** Get all notifications for a user */
 export async function getUserNotifications(userId: string, maxCount = 30): Promise<Notification[]> {
   const q = query(
-    collection(db, COL),
+    collection(getDb(), COL),
     where("userId", "==", userId),
     orderBy("createdAt", "desc"),
     limit(maxCount)
@@ -31,12 +31,12 @@ export async function getUserNotifications(userId: string, maxCount = 30): Promi
 
 /** Mark a single notification as read */
 export async function markNotificationRead(id: string): Promise<void> {
-  await updateDoc(doc(db, COL, id), { isRead: true });
+  await updateDoc(doc(getDb(), COL, id), { isRead: true });
 }
 
 /** Mark all notifications as read for a user */
 export async function markAllNotificationsRead(userId: string): Promise<void> {
-  const q = query(collection(db, COL), where("userId", "==", userId), where("isRead", "==", false));
+  const q = query(collection(getDb(), COL), where("userId", "==", userId), where("isRead", "==", false));
   const snap = await getDocs(q);
   await Promise.all(snap.docs.map((d) => updateDoc(d.ref, { isRead: true })));
 }
@@ -47,7 +47,7 @@ export function subscribeToNotifications(
   callback: (notifications: Notification[]) => void
 ): () => void {
   const q = query(
-    collection(db, COL),
+    collection(getDb(), COL),
     where("userId", "==", userId),
     orderBy("createdAt", "desc"),
     limit(20)

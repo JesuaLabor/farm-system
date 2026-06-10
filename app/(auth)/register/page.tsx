@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "@/lib/firebase";
+import { getFirebaseAuth, getDb } from "@/lib/firebase";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
@@ -31,10 +31,10 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const { user } = await createUserWithEmailAndPassword(auth, email, password);
+      const { user } = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password);
       
       // Create user profile in Firestore
-      await setDoc(doc(db, "users", user.uid), {
+      await setDoc(doc(getDb(), "users", user.uid), {
         uid: user.uid,
         name,
         email,

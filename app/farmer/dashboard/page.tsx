@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { auth } from "@/lib/firebase";
+import { getFirebaseAuth } from "@/lib/firebase";
 import NotificationList from "@/components/dashboard/NotificationList";
 
 export default function FarmerDashboard() {
@@ -20,7 +20,7 @@ export default function FarmerDashboard() {
   }
 
   const handleLogout = async () => {
-    await auth.signOut();
+    await getFirebaseAuth().signOut();
     router.push("/login");
   };
 

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getDb } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
@@ -31,7 +31,7 @@ export default function MyApplicationsPage() {
   const fetchApplications = async () => {
     try {
       const q = query(
-        collection(db, "aid_applications"), 
+        collection(getDb(), "aid_applications"), 
         where("farmerId", "==", user?.uid),
         orderBy("submittedAt", "desc")
       );

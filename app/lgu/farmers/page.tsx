@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getDb } from "@/lib/firebase";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -29,7 +29,7 @@ export default function FarmerDirectory() {
 
   const fetchFarmers = async () => {
     try {
-      const q = query(collection(db, "users"), where("role", "==", "farmer"));
+      const q = query(collection(getDb(), "users"), where("role", "==", "farmer"));
       const querySnapshot = await getDocs(q);
       const data = querySnapshot.docs.map((doc) => ({ uid: doc.id, ...doc.data() } as Farmer));
       setFarmers(data);

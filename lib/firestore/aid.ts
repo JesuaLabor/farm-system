@@ -9,7 +9,7 @@ import {
   where,
   orderBy,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getDb } from "@/lib/firebase";
 import type { AidProgram, AidApplication, ApplicationStatus } from "@/types";
 import { generateRef } from "@/lib/utils";
 
@@ -22,7 +22,7 @@ const APP_COL = "aid_applications";
 export async function createAidProgram(
   data: Omit<AidProgram, "id" | "createdAt">
 ): Promise<string> {
-  const ref = await addDoc(collection(db, PROG_COL), {
+  const ref = await addDoc(collection(getDb(), PROG_COL), {
     ...data,
     createdAt: new Date().toISOString(),
   });
@@ -32,7 +32,7 @@ export async function createAidProgram(
 /** Get all published aid programs (farmer-facing) */
 export async function getPublishedAidPrograms(): Promise<AidProgram[]> {
   const q = query(
-    collection(db, PROG_COL),
+    collection(getDb(), PROG_COL),
     where("isPublished", "==", true),
     orderBy("deadline", "asc")
   );
@@ -43,7 +43,7 @@ export async function getPublishedAidPrograms(): Promise<AidProgram[]> {
 /** Get all aid programs managed by an LGU officer */
 export async function getLguAidPrograms(lguUid: string): Promise<AidProgram[]> {
   const q = query(
-    collection(db, PROG_COL),
+    collection(getDb(), PROG_COL),
     where("managedBy", "==", lguUid),
     orderBy("createdAt", "desc")
   );
@@ -53,7 +53,7 @@ export async function getLguAidPrograms(lguUid: string): Promise<AidProgram[]> {
 
 /** Get a single aid program */
 export async function getAidProgram(id: string): Promise<AidProgram | null> {
-  const snap = await getDoc(doc(db, PROG_COL, id));
+  const snap = await getDoc(doc(getDb(), PROG_COL, id));
   if (!snap.exists()) return null;
   return { id: snap.id, ...snap.data() } as AidProgram;
 }
@@ -63,7 +63,7 @@ export async function setAidProgramPublished(
   id: string,
   isPublished: boolean
 ): Promise<void> {
-  await updateDoc(doc(db, PROG_COL, id), { isPublished });
+  await updateDoc(doc(getDb(), PROG_COL, id), { isPublished });
 }
 
 /** Update an aid program */
@@ -71,7 +71,7 @@ export async function updateAidProgram(
   id: string,
   data: Partial<Omit<AidProgram, "id" | "createdAt">>
 ): Promise<void> {
-  await updateDoc(doc(db, PROG_COL, id), data);
+  await updateDoc(doc(getDb(), PROG_COL, id), data);
 }
 
 // ─── Aid Applications ─────────────────────────────────────────────────────────
@@ -80,7 +80,7 @@ export async function updateAidProgram(
 export async function submitAidApplication(
   data: Omit<AidApplication, "id" | "createdAt" | "referenceNumber" | "status">
 ): Promise<string> {
-  const ref = await addDoc(collection(db, APP_COL), {
+  const ref = await addDoc(collection(getDb(), APP_COL), {
     ...data,
     status: "submitted" as ApplicationStatus,
     referenceNumber: generateRef(),
@@ -94,7 +94,7 @@ export async function getFarmerApplications(
   farmerId: string
 ): Promise<AidApplication[]> {
   const q = query(
-    collection(db, APP_COL),
+    collection(getDb(), APP_COL),
     where("farmerId", "==", farmerId),
     orderBy("createdAt", "desc")
   );
@@ -107,7 +107,7 @@ export async function getProgramApplications(
   programId: string
 ): Promise<AidApplication[]> {
   const q = query(
-    collection(db, APP_COL),
+    collection(getDb(), APP_COL),
     where("programId", "==", programId),
     orderBy("createdAt", "desc")
   );
@@ -122,7 +122,7 @@ export async function reviewApplication(
   notes?: string,
   reviewedBy?: string
 ): Promise<void> {
-  await updateDoc(doc(db, APP_COL, id), {
+  await updateDoc(doc(getDb(), APP_COL, id), {
     status,
     reviewerNotes: notes ?? "",
     reviewedBy: reviewedBy ?? "",

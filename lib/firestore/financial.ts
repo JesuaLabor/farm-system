@@ -9,7 +9,7 @@ import {
   orderBy,
   limit,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getDb } from "@/lib/firebase";
 import type { FinancialRecord, HarvestLog } from "@/types";
 
 const FIN_COL = "financial_records";
@@ -21,7 +21,7 @@ const HARVEST_COL = "harvest_logs";
 export async function addFinancialRecord(
   data: Omit<FinancialRecord, "id" | "createdAt">
 ): Promise<string> {
-  const ref = await addDoc(collection(db, FIN_COL), {
+  const ref = await addDoc(collection(getDb(), FIN_COL), {
     ...data,
     createdAt: new Date().toISOString(),
   });
@@ -34,7 +34,7 @@ export async function getFinancialRecords(
   opts?: { fromDate?: string; toDate?: string }
 ): Promise<FinancialRecord[]> {
   const q = query(
-    collection(db, FIN_COL),
+    collection(getDb(), FIN_COL),
     where("farmerId", "==", farmerId),
     orderBy("date", "desc")
   );
@@ -52,7 +52,7 @@ export async function getFinancialRecords(
 
 /** Delete a financial record */
 export async function deleteFinancialRecord(id: string): Promise<void> {
-  await deleteDoc(doc(db, FIN_COL, id));
+  await deleteDoc(doc(getDb(), FIN_COL, id));
 }
 
 /** Compute totals: income, expense, and net profit */
@@ -105,7 +105,7 @@ export function groupExpensesByCategory(
 export async function addHarvestLog(
   data: Omit<HarvestLog, "id" | "createdAt">
 ): Promise<string> {
-  const ref = await addDoc(collection(db, HARVEST_COL), {
+  const ref = await addDoc(collection(getDb(), HARVEST_COL), {
     ...data,
     createdAt: new Date().toISOString(),
   });
@@ -118,7 +118,7 @@ export async function getHarvestLogs(
   maxCount = 50
 ): Promise<HarvestLog[]> {
   const q = query(
-    collection(db, HARVEST_COL),
+    collection(getDb(), HARVEST_COL),
     where("farmerId", "==", farmerId),
     orderBy("harvestDate", "desc"),
     limit(maxCount)
@@ -129,5 +129,5 @@ export async function getHarvestLogs(
 
 /** Delete a harvest log entry */
 export async function deleteHarvestLog(id: string): Promise<void> {
-  await deleteDoc(doc(db, HARVEST_COL, id));
+  await deleteDoc(doc(getDb(), HARVEST_COL, id));
 }

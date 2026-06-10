@@ -52,3 +52,22 @@ try {
 }
 
 export { app, auth, db, storage };
+
+// ─── Type-safe assertion helpers ─────────────────────────────────────────────
+// Use these in Firestore helpers instead of the raw exports so TypeScript
+// knows the value is definitely initialized (throws at runtime in mock mode).
+
+export function getDb() {
+  if (!db) throw new Error("Firestore is not initialized. Check your Firebase environment variables.");
+  return db;
+}
+
+export function getFirebaseAuth() {
+  if (!auth) throw new Error("Firebase Auth is not initialized. Check your Firebase environment variables.");
+  return auth;
+}
+
+export function getFirebaseStorage() {
+  if (!storage) throw new Error("Firebase Storage is not initialized. Check your Firebase environment variables.");
+  return storage;
+}

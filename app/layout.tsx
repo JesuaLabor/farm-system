@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "react-hot-toast";
+import { AIAssistant } from "@/components/ai/AIAssistant";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
@@ -28,6 +29,7 @@ export default function RootLayout({
         <AuthProvider>
           <Toaster position="top-right" />
           {children}
+          <AIAssistant />
         </AuthProvider>
       </body>
     </html>

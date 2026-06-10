@@ -28,12 +28,13 @@ function searchKnowledgeBase(query: string, userRole: UserRole): string {
   const fuse = new Fuse<QAPair>(relevant, {
     keys: [
       { name: "question", weight: 0.5 },
-      { name: "keywords", weight: 0.35 },
-      { name: "answer", weight: 0.15 },
+      { name: "keywords", weight: 0.4 },
+      { name: "answer", weight: 0.1 },
     ],
-    threshold: 0.45, // 0 = exact, 1 = match anything
+    threshold: 0.6,   // 0 = exact match, 1 = match anything
     includeScore: true,
     minMatchCharLength: 2,
+    ignoreLocation: true, // search entire string, not just the start
   });
 
   const results = fuse.search(query);
@@ -42,7 +43,7 @@ function searchKnowledgeBase(query: string, userRole: UserRole): string {
 
   const best = results[0];
   // Only return if score is good enough (lower is better in Fuse)
-  if (best.score !== undefined && best.score > 0.45) return FALLBACK_ANSWER;
+  if (best.score !== undefined && best.score > 0.6) return FALLBACK_ANSWER;
 
   return best.item.answer;
 }

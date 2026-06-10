@@ -140,7 +140,7 @@ export const knowledgeBase: QAPair[] = [
   {
     id: "far-007",
     roles: ["farmer"],
-    keywords: ["aid", "apply aid", "government aid", "subsidy", "loan", "seed", "training", "programs"],
+    keywords: ["aid", "apply aid", "apply for aid", "government aid", "subsidy", "loan", "seed", "training", "programs", "apply program", "aid program", "assistance", "benefits", "grant"],
     question: "How do I apply for a government aid program?",
     answer:
       "Go to **Farmer → Aid Programs**. Browse available programs from your LGU. Click on a program to see:\n- Eligibility requirements\n- Required documents\n- Application deadline\n\nClick **Apply Now**, fill out the form (your profile data is auto-filled), upload required documents, and submit. You'll receive a **reference number** after submitting.",
@@ -184,7 +184,7 @@ export const knowledgeBase: QAPair[] = [
   {
     id: "far-012",
     roles: ["farmer"],
-    keywords: ["export", "download report", "pdf", "excel", "financial report"],
+    keywords: ["export", "download report", "pdf", "excel", "financial report", "download", "export records", "save report", "financial records", "download financial", "get report"],
     question: "How do I export my financial records?",
     answer:
       "In **Farmer → Financial Tracker**, click the **Export** button in the top right. Choose:\n- **PDF** — formatted report with charts\n- **Excel/CSV** — spreadsheet with all records\n\nThe export includes your farm name, date range, and a summary.",
@@ -416,7 +416,7 @@ export const knowledgeBase: QAPair[] = [
   {
     id: "tec-001",
     roles: ["farmer", "buyer", "lgu", "expert", "admin", "guest"],
-    keywords: ["not working", "error", "problem", "issue", "bug", "broken", "loading", "slow"],
+    keywords: ["not working", "error", "problem", "issue", "bug", "broken", "loading", "slow", "app broken", "not loading", "crash", "fix", "trouble", "help", "something wrong"],
     question: "The app is not loading or something isn't working.",
     answer:
       "Here are some quick fixes:\n1. **Refresh the page** (Ctrl+R or ⌘+R)\n2. **Check your internet connection**\n3. **Clear your browser cache** (Ctrl+Shift+Delete)\n4. Try a different browser (Chrome or Firefox recommended)\n\nIf the problem continues, please contact the platform administrator.",
